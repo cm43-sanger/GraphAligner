@@ -1,16 +1,16 @@
 PLATFORM=$(shell uname -s)
 GPP=$(CXX)
-CPPFLAGS=-Wall -Wextra -std=c++17 -O3 -g -Iconcurrentqueue -IBBHash -Izstr/src -Iparallel-hashmap/parallel_hashmap/ `pkg-config --cflags protobuf` `pkg-config --cflags libsparsehash` -Wno-unused-parameter -IMEMfinder/src -I`jemalloc-config --includedir` -Icxxopts/include
+CPPFLAGS=-Wall -Wextra -std=c++17 -O3 -g -Iconcurrentqueue -IBBHash -Izstr/src -Iparallel-hashmap/parallel_hashmap/ `pkg-config --cflags protobuf` `pkg-config --cflags libsparsehash` -Wno-unused-parameter -IMEMfinder/src `pkg-config --cflags jemalloc` -Icxxopts/include
 # silly workaround: bamtools does not have pkg-config cflags for finding the include directory
 # instead assume it's a folder at the same location as zlib
-CPPFLAGS+=`pkg-config --cflags zlib`/bamtools
+CPPFLAGS+=-I`pkg-config --variable=includedir zlib`/bamtools
 
 ODIR=obj
 BINDIR=bin
 SRCDIR=src
 
 LIBS=-lm -lz `pkg-config --libs protobuf` -lsdsl -lbamtools
-JEMALLOCFLAGS= -L`jemalloc-config --libdir` -Wl,-rpath,`jemalloc-config --libdir` -ljemalloc `jemalloc-config --libs`
+JEMALLOCFLAGS= -L`pkg-config --variable=libdir jemalloc` -Wl,-rpath,`pkg-config --variable=libdir jemalloc` `pkg-config --libs jemalloc`
 
 _DEPS = vg.pb.h fastqloader.h GraphAlignerWrapper.h vg.pb.h BigraphToDigraph.h stream.hpp Aligner.h ThreadReadAssertion.h AlignmentGraph.h CommonUtils.h GfaGraph.h ReadCorrection.h MinimizerSeeder.h AlignmentSelection.h EValue.h MEMSeeder.h DNAString.h DiploidHeuristic.h
 DEPS = $(patsubst %, $(SRCDIR)/%, $(_DEPS))

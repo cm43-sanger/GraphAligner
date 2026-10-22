@@ -122,7 +122,7 @@ public:
 		{
 			// only primary
 			if (!aln.IsPrimaryAlignment()) continue;
-			if (aln.IsSupplementary()) continue;
+			if (aln.IsSupplementaryAlignment()) continue;
 			FastQ newread;
 			newread.seq_id = aln.Name;
 			newread.sequence = aln.QueryBases;

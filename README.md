@@ -21,6 +21,12 @@ Bioconda is the recommended installation method. If you however want to compile 
 - `source activate GraphAligner`
 - `make bin/GraphAligner`
 
+To build and run GraphAligner on Linux with Docker (without Conda):
+
+- `git submodule update --init --recursive`
+- `docker build -t graphaligner .`
+- `docker run --rm graphaligner --help`
+
 If you want to compile without miniconda, you will need to install [boost](https://www.boost.org/), [protobuf and protoc](https://developers.google.com/protocol-buffers), [sdsl](https://github.com/simongog/sdsl-lite), [jemalloc](https://github.com/jemalloc/jemalloc), [htslib](https://github.com/samtools/htslib) and [sparsehash](https://github.com/sparsehash/sparsehash).
 
 ### Running
