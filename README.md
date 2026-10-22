@@ -78,6 +78,7 @@ All parameters below are optional.
 - `--precise-clipping` use arg as the identity threshold for a valid alignment. Recommended to be less than the accuracy of the reads, for example 0.75 for ONT, 0.9 for HiFi, 0.95 for assembly-to-assembly.
 - `--min-alignment-score` discard alignments whose score is less than this.
 - `--multimap-score-fraction` alignment score fraction for including secondary alignments. Alignments whose alignment score is less than arg as a fraction of the best scoring overlapping alignment per read are discarded. Lower values include more poor secondary alignments and higher values less.
+- `--best-alignment-only` output only the highest-scoring alignment for each query.
 - `--gaf-query-sequence` add the query sequence to each GAF alignment as a `qs:Z` tag.
 
 Seeding:

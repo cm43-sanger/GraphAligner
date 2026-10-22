@@ -637,6 +637,7 @@ void runComponentMappings(const AlignmentGraph& alignmentGraph, const DiploidHeu
 		stats.bpFromReadsAligned += bpAligned;
 
 		std::sort(alignments.alignments.begin(), alignments.alignments.end(), [](const AlignmentResult::AlignmentItem& left, const AlignmentResult::AlignmentItem& right) { return left.alignmentXScore > right.alignmentXScore; });
+		if (params.bestAlignmentOnly && alignments.alignments.size() > 1) alignments.alignments.resize(1);
 
 		if (params.outputGAMFile != "" || params.outputJSONFile != "")
 		{
