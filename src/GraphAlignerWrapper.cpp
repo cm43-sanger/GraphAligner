@@ -31,11 +31,11 @@ void AddAlignment(const std::string& seq_id, const std::string& sequence, Alignm
 	aligner.AddAlignment(seq_id, sequence, alignment);
 }
 
-void AddGAFLine(const AlignmentGraph& graph, const std::string& seq_id, const std::string& sequence, AlignmentResult::AlignmentItem& alignment, bool cigarMatchMismatchMerge, bool includeCigar)
+void AddGAFLine(const AlignmentGraph& graph, const std::string& seq_id, const std::string& sequence, AlignmentResult::AlignmentItem& alignment, bool cigarMatchMismatchMerge, bool includeCigar, bool includeQuerySequence)
 {
 	GraphAlignerCommon<size_t, int64_t, uint64_t>::Params params {1, graph, 1, true, .5, 0, 0, 0, 0};
 	GraphAligner<size_t, int64_t, uint64_t> aligner {params};
-	aligner.AddGAFLine(seq_id, sequence, alignment, cigarMatchMismatchMerge, includeCigar);
+	aligner.AddGAFLine(seq_id, sequence, alignment, cigarMatchMismatchMerge, includeCigar, includeQuerySequence);
 }
 
 void AddCorrected(AlignmentResult::AlignmentItem& alignment)

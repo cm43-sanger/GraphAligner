@@ -43,6 +43,7 @@ struct AlignerParams
 	double minAlignmentScore;
 	bool hpcCollapse;
 	bool includeCigar;
+	bool includeGAFQuerySequence;
 	int clipAmbiguousEnds;
 	double overlapIncompatibleCutoff;
 	size_t maxTraceCount;

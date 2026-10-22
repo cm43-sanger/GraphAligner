@@ -34,7 +34,7 @@ class GraphAlignerGAFAlignment
 	};
 public:
 
-	static std::string traceToAlignment(const std::string& seq_id, const std::string& sequence, const GraphAlignerCommon<size_t, int64_t, uint64_t>::OnewayTrace& tracePair, double alignmentXScore, int mappingQuality, const Params& params, bool cigarMatchMismatchMerge, const bool includecigar)
+	static std::string traceToAlignment(const std::string& seq_id, const std::string& sequence, const GraphAlignerCommon<size_t, int64_t, uint64_t>::OnewayTrace& tracePair, double alignmentXScore, int mappingQuality, const Params& params, bool cigarMatchMismatchMerge, const bool includecigar, const bool includeQuerySequence)
 	{
 		auto& trace = tracePair.trace;
 		if (trace.size() == 0) return nullptr;
@@ -196,6 +196,7 @@ public:
 		sstr << "\t" << "dv:f:" << 1.0-((double)matches / (double)(matches + mismatches + deletions + insertions));
 		sstr << "\t" << "id:f:" << ((double)matches / (double)(matches + mismatches + deletions + insertions));
 		if (includecigar) sstr << "\t" << "cg:Z:" << cigar.str();
+		if (includeQuerySequence) sstr << "\t" << "qs:Z:" << sequence;
 		return sstr.str();
 	}
 

@@ -52,6 +52,7 @@ int main(int argc, char** argv)
 		("min-alignment-score", "discard alignments with alignment score < arg (double) (default 0)", cxxopts::value<double>())
 		("multimap-score-fraction", "discard alignments whose alignment score is less than this fraction of the best overlapping alignment (double) (default 0.9)", cxxopts::value<double>())
 		("keep-sequence-name-tags", "Keep tags in input sequence names")
+		("gaf-query-sequence", "Include the query sequence as a qs:Z tag in GAF output")
 	;
 	options.add_options("Seeding")
 		("max-cluster-extend", "extend up to arg seed clusters (int) (-1 for all) (default 10)", cxxopts::value<size_t>())
@@ -139,6 +140,7 @@ int main(int argc, char** argv)
 	params.minAlignmentScore = 0;
 	params.hpcCollapse = false;
 	params.includeCigar = true;
+	params.includeGAFQuerySequence = false;
 	params.clipAmbiguousEnds = -1;
 	params.maxTraceCount = 10;
 	params.overlapIncompatibleCutoff = 0.3;
@@ -218,6 +220,7 @@ int main(int argc, char** argv)
 	if (vm.count("precise-clipping")) params.preciseClippingIdentityCutoff = vm["precise-clipping"].as<double>();
 	if (vm.count("hpc-collapse-reads")) params.hpcCollapse = true;
 	if (vm.count("discard-cigar")) params.includeCigar = false;
+	if (vm.count("gaf-query-sequence")) params.includeGAFQuerySequence = true;
 	if (vm.count("clip-ambiguous-ends")) params.clipAmbiguousEnds = vm["clip-ambiguous-ends"].as<int>();
 	if (vm.count("overlap-incompatible-cutoff")) params.overlapIncompatibleCutoff = vm["overlap-incompatible-cutoff"].as<double>();
 	if (vm.count("unique-mem-bonus-factor")) params.uniqueMemBonusFactor = vm["unique-mem-bonus-factor"].as<double>();

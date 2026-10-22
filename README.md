@@ -25,7 +25,7 @@ To build and run GraphAligner on Linux with Docker (without Conda):
 
 - `git submodule update --init --recursive`
 - `docker build --platform linux/amd64 -t graphaligner .`
-- `docker run --rm graphaligner --help`
+- `docker run --rm graphaligner GraphAligner --help`
 
 If you want to compile without miniconda, you will need to install [boost](https://www.boost.org/), [protobuf and protoc](https://developers.google.com/protocol-buffers), [sdsl](https://github.com/simongog/sdsl-lite), [jemalloc](https://github.com/jemalloc/jemalloc), [htslib](https://github.com/samtools/htslib) and [sparsehash](https://github.com/sparsehash/sparsehash).
 
@@ -78,6 +78,7 @@ All parameters below are optional.
 - `--precise-clipping` use arg as the identity threshold for a valid alignment. Recommended to be less than the accuracy of the reads, for example 0.75 for ONT, 0.9 for HiFi, 0.95 for assembly-to-assembly.
 - `--min-alignment-score` discard alignments whose score is less than this.
 - `--multimap-score-fraction` alignment score fraction for including secondary alignments. Alignments whose alignment score is less than arg as a fraction of the best scoring overlapping alignment per read are discarded. Lower values include more poor secondary alignments and higher values less.
+- `--gaf-query-sequence` add the query sequence to each GAF alignment as a `qs:Z` tag.
 
 Seeding:
 
