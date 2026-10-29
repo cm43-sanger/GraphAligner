@@ -6,30 +6,11 @@ Seed-and-extend program for aligning long error-prone reads to genome graphs. To
 
 ### Installation
 
-Install via [bioconda](https://bioconda.github.io/):
-
-- Install miniconda https://conda.io/projects/conda/en/latest/user-guide/install/index.html
-- `conda install -c bioconda graphaligner`
-
-#### Compilation
-
-Bioconda is the recommended installation method. If you however want to compile GraphAligner yourself, run these:
-
-- Install miniconda https://conda.io/projects/conda/en/latest/user-guide/install/index.html
-- `git clone https://github.com/maickrau/GraphAligner.git`
-- `cd GraphAligner`
-- `git submodule update --init --recursive`
-- `conda env create -f CondaEnvironment_linux.yml` or `conda env create -f CondaEnvironment_osx.yml`
-- `source activate GraphAligner`
-- `make bin/GraphAligner`
-
-To build and run GraphAligner on Linux with Docker (without Conda):
+The phylograph fork of GraphAligner is distributed and used as a Docker image:
 
 - `git submodule update --init --recursive`
 - `docker build --platform linux/amd64 -t graphaligner .`
 - `docker run --rm graphaligner GraphAligner --help`
-
-If you want to compile without miniconda, you will need to install [boost](https://www.boost.org/), [protobuf and protoc](https://developers.google.com/protocol-buffers), [sdsl](https://github.com/simongog/sdsl-lite), [jemalloc](https://github.com/jemalloc/jemalloc), [htslib](https://github.com/samtools/htslib), [sparsehash](https://github.com/sparsehash/sparsehash), and [BamTools](https://github.com/pezmaster31/bamtools) version 2.5.2 or newer.
 
 ### Running
 
