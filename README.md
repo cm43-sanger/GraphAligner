@@ -1,3 +1,5 @@
+TODO: fix this for current build.
+
 # GraphAligner
 
 Seed-and-extend program for aligning long error-prone reads to genome graphs. To cite, see https://genomebiology.biomedcentral.com/articles/10.1186/s13059-020-02157-2. For a description of the bitvector alignment extension algorithm, see https://academic.oup.com/bioinformatics/advance-article/doi/10.1093/bioinformatics/btz162/5372677
@@ -27,7 +29,7 @@ To build and run GraphAligner on Linux with Docker (without Conda):
 - `docker build --platform linux/amd64 -t graphaligner .`
 - `docker run --rm graphaligner GraphAligner --help`
 
-If you want to compile without miniconda, you will need to install [boost](https://www.boost.org/), [protobuf and protoc](https://developers.google.com/protocol-buffers), [sdsl](https://github.com/simongog/sdsl-lite), [jemalloc](https://github.com/jemalloc/jemalloc), [htslib](https://github.com/samtools/htslib) and [sparsehash](https://github.com/sparsehash/sparsehash).
+If you want to compile without miniconda, you will need to install [boost](https://www.boost.org/), [protobuf and protoc](https://developers.google.com/protocol-buffers), [sdsl](https://github.com/simongog/sdsl-lite), [jemalloc](https://github.com/jemalloc/jemalloc), [htslib](https://github.com/samtools/htslib), [sparsehash](https://github.com/sparsehash/sparsehash), and [BamTools](https://github.com/pezmaster31/bamtools) version 2.5.2 or newer.
 
 ### Running
 

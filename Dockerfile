@@ -1,4 +1,4 @@
-FROM ubuntu:22.04 AS build
+FROM ubuntu:26.04 AS build
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
@@ -18,7 +18,7 @@ WORKDIR /src
 COPY . .
 RUN make bin/GraphAligner
 
-FROM ubuntu:22.04 AS runtime
+FROM ubuntu:26.04 AS runtime
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libjemalloc2 \
@@ -26,4 +26,5 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 COPY --from=build /src/bin/GraphAligner /usr/local/bin/GraphAligner
 
-RUN command -v GraphAligner && GraphAligner --help >/dev/null
+RUN command -v GraphAligner \
+    && GraphAligner --help > /dev/null
