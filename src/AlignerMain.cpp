@@ -4,6 +4,7 @@
 #include <limits>
 #include <csignal>
 #include <cstdint>
+#include <algorithm>
 #include "cxxopts.hpp"
 #include "Aligner.h"
 #include "stream.hpp"
@@ -269,6 +270,11 @@ int main(int argc, char** argv)
 	if (params.fastqFiles.size() == 0)
 	{
 		std::cerr << "read file must be given" << std::endl;
+		paramError = true;
+	}
+	if (std::count(params.fastqFiles.begin(), params.fastqFiles.end(), "-") > 1)
+	{
+		std::cerr << "stdin can only be used for one input read file" << std::endl;
 		paramError = true;
 	}
 	if (outputAlns.size() == 0 && params.outputCorrectedFile == "" && params.outputCorrectedClippedFile == "")
