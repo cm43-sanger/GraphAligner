@@ -51,7 +51,7 @@ The algorithm starts using the initial bandwidth. Should it detect that the alig
 ### Parameters
 
 - `-g` input graph. Format .gfa / .vg
-- `-f` input reads. Format .fasta / .fastq / .fasta.gz / .fastq.gz / .sam / .bam. You can input multiple files with `-f file1 -f file2 ...` or `-f file1 file2 ...`
+- `-f` input reads. Format .fasta / .fastq / .fasta.gz / .fastq.gz / .sam / .bam. Use `-f -` to read FASTA or FASTQ from stdin. You can input multiple files with `-f file1 -f file2 ...` or `-f file1 file2 ...`
 - `-t` number of aligner threads. The program also uses two IO threads in addition to these.
 - `-a` output file name. Format .gaf or .json or .gam
 - `-x` parameter preset. Use `-x vg` for aligning to variation graphs and other simple graphs, and `-x dbg` for aligning to de Bruijn graphs.

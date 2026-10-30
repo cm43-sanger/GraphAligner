@@ -2,6 +2,7 @@
 #define FastqLoader_H
 
 #include <exception>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdint>
@@ -105,6 +106,22 @@ public:
 		streamFastqFastaFromStream(file, includeQuality, f);
 	}
 	template <typename F>
+	static void streamFastqFromStdin(bool includeQuality, F f)
+	{
+		switch (std::cin.peek())
+		{
+		case '>':
+			streamFastqFastaFromStream(std::cin, includeQuality, f);
+			break;
+		case '@':
+			streamFastqFastqFromStream(std::cin, includeQuality, f);
+			break;
+		default:
+			std::cerr << "Can't determine type of input sequence data from stdin (expected FASTA ('>') or FASTQ ('@'))\n";
+			std::abort();
+		}
+	}
+	template <typename F>
 	static void streamBam(std::string filename, bool includeQuality, F f)
 	{
 		// https://github.com/pezmaster31/bamtools/wiki/Using-the-API
@@ -136,6 +153,11 @@ public:
 	template <typename F>
 	static void streamFastqFromFile(std::string filename, bool includeQuality, F f)
 	{
+		if (filename == "-")
+		{
+			streamFastqFromStdin(includeQuality, f);
+			return;
+		}
 		bool gzipped = false;
 		std::string originalFilename = filename;
 		if (filename.size() > 3 && lowercase(filename.substr(filename.size()-3)) == ".gz")

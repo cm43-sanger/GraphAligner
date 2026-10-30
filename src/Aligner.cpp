@@ -807,6 +807,7 @@ void alignReads(AlignerParams params)
 	}
 	for (const auto& filename : params.fastqFiles)
 	{
+		if (filename == "-") continue;
 		std::ifstream file { filename };
 		if (!file.good())
 		{

@@ -35,7 +35,7 @@ int main(int argc, char** argv)
 	cxxopts::Options options { "GraphAligner" };
 	options.add_options("Mandatory parameters")
 		("graph,g", "input graph (.gfa / .vg)", cxxopts::value<std::string>())
-		("reads,f", "input reads (fasta or fastq, uncompressed or gzipped, or bam)", cxxopts::value<std::vector<std::string>>()->multitoken())
+		("reads,f", "input reads (fasta or fastq, uncompressed or gzipped, bam, or '-' for fasta/fastq on stdin)", cxxopts::value<std::vector<std::string>>()->multitoken())
 		("alignments-out,a", "output alignment file (.gaf/.gam/.json)", cxxopts::value<std::vector<std::string>>())
 		("corrected-out", "output corrected reads file (.fa/.fa.gz)", cxxopts::value<std::string>())
 		("corrected-clipped-out", "output corrected clipped reads file (.fa/.fa.gz)", cxxopts::value<std::string>())
