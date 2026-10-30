@@ -37,7 +37,7 @@ int main(int argc, char** argv)
 	options.add_options("Mandatory parameters")
 		("graph,g", "input graph (.gfa / .vg)", cxxopts::value<std::string>())
 		("reads,f", "input reads (fasta or fastq, uncompressed or gzipped, bam, or '-' for fasta/fastq on stdin)", cxxopts::value<std::vector<std::string>>()->multitoken())
-		("alignments-out,a", "output alignment file (.gaf/.gam/.json)", cxxopts::value<std::vector<std::string>>())
+		("alignments-out,a", "output alignment file (.gaf/.gaf.gz/.gam/.json/.json.gz)", cxxopts::value<std::vector<std::string>>())
 		("corrected-out", "output corrected reads file (.fa/.fa.gz)", cxxopts::value<std::string>())
 		("corrected-clipped-out", "output corrected clipped reads file (.fa/.fa.gz)", cxxopts::value<std::string>())
 	;
@@ -284,21 +284,24 @@ int main(int argc, char** argv)
 	}
 	for (std::string file : outputAlns)
 	{
-		if (file.size() >= 4 && file.substr(file.size()-4) == ".gam")
+		bool gzipped = file.size() >= 3 && file.substr(file.size()-3) == ".gz";
+		std::string format = file;
+		if (gzipped) format.resize(format.size()-3);
+		if (!gzipped && format.size() >= 4 && format.substr(format.size()-4) == ".gam")
 		{
 			params.outputGAMFile = file;
 		}
-		else if (file.size() >= 5 && file.substr(file.size()-5) == ".json")
+		else if (format.size() >= 5 && format.substr(format.size()-5) == ".json")
 		{
 			params.outputJSONFile = file;
 		}
-		else if (file.size() >= 4 && file.substr(file.size()-4) == ".gaf")
+		else if (format.size() >= 4 && format.substr(format.size()-4) == ".gaf")
 		{
 			params.outputGAFFile = file;
 		}
 		else
 		{
-			std::cerr << "unknown output alignment format (" << file << "), must be either .gaf, .gam or .json" << std::endl;
+			std::cerr << "unknown output alignment format (" << file << "), must be either .gaf, .gaf.gz, .gam, .json or .json.gz" << std::endl;
 			paramError = true;
 		}
 	}

@@ -2,6 +2,7 @@ FROM ubuntu:26.04 AS build
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
+    ca-certificates \
     git \
     libbamtools-dev \
     libdivsufsort-dev \
@@ -14,8 +15,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     zlib1g-dev \
     && rm -rf /var/lib/apt/lists/*
 
+RUN git clone --recursive https://github.com/cm43-sanger/GraphAligner /src
 WORKDIR /src
-COPY . .
 RUN make bin/GraphAligner
 
 FROM ubuntu:26.04 AS minimal

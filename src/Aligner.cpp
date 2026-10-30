@@ -3,6 +3,7 @@
 #include <fstream>
 #include <functional>
 #include <algorithm>
+#include <memory>
 #include <thread>
 #include <concurrentqueue.h> //https://github.com/cameron314/concurrentqueue
 #include <google/protobuf/util/json_util.h>
@@ -191,14 +192,26 @@ void readFastqs(const std::vector<std::string>& filenames, moodycamel::Concurren
 	readStreamingFinished = true;
 }
 
-void consumeBytesAndWrite(const std::string& filename, moodycamel::ConcurrentQueue<std::string*>& writequeue, moodycamel::ConcurrentQueue<std::string*>& deallocqueue, std::atomic<bool>& allThreadsDone, std::atomic<bool>& allWriteDone, bool verboseMode, bool textMode)
+void consumeBytesAndWrite(const std::string& filename, moodycamel::ConcurrentQueue<std::string*>& writequeue, moodycamel::ConcurrentQueue<std::string*>& deallocqueue, std::atomic<bool>& allThreadsDone, std::atomic<bool>& allWriteDone, bool verboseMode, bool textMode, bool gzipOutput)
 {
 	assertSetNoRead("Writer");
 	auto openmode = std::ios::out;
 	if (!textMode) openmode |= std::ios::binary;
-	std::ofstream outfile { filename, openmode };
+	std::unique_ptr<std::ofstream> outfile;
+	std::unique_ptr<zstr::ofstream> compressedOut;
+	std::ostream* output;
+	if (gzipOutput)
+	{
+		compressedOut = std::make_unique<zstr::ofstream>(filename, openmode);
+		output = compressedOut.get();
+	}
+	else
+	{
+		outfile = std::make_unique<std::ofstream>(filename, openmode);
+		output = outfile.get();
+	}
 
-	if (!outfile.good())
+	if (!output->good())
 	{
 		std::cerr << "Cannot write results to file: " << filename << std::endl;
 		std::abort();
@@ -216,7 +229,7 @@ void consumeBytesAndWrite(const std::string& filename, moodycamel::ConcurrentQue
 
 	while (true)
 	{
-		if (!outfile.good())
+		if (!output->good())
 		{
 			std::cerr << "Cannot write results to file: " << filename << std::endl;
 			std::abort();
@@ -235,7 +248,7 @@ void consumeBytesAndWrite(const std::string& filename, moodycamel::ConcurrentQue
 		coutoutput << "write " << gotAlns << ", " << writequeue.size_approx() << " left" << BufferedWriter::Flush;
 		for (size_t i = 0; i < gotAlns; i++)
 		{
-			outfile.write(alns[i]->data(), alns[i]->size());
+			output->write(alns[i]->data(), alns[i]->size());
 		}
 		deallocqueue.enqueue_bulk(alns, gotAlns);
 		wroteAny = true;
@@ -244,7 +257,7 @@ void consumeBytesAndWrite(const std::string& filename, moodycamel::ConcurrentQue
 	if (!textMode && !wroteAny)
 	{
 		::google::protobuf::io::ZeroCopyOutputStream *raw_out =
-		      new ::google::protobuf::io::OstreamOutputStream(&outfile);
+		      new ::google::protobuf::io::OstreamOutputStream(outfile.get());
 		::google::protobuf::io::GzipOutputStream *gzip_out =
 		      new ::google::protobuf::io::GzipOutputStream(raw_out);
 		::google::protobuf::io::CodedOutputStream *coded_out =
@@ -971,11 +984,11 @@ void alignReads(AlignerParams params)
 	std::cout << "Align" << std::endl;
 	AlignmentStats stats;
 	std::thread fastqThread { [files=params.fastqFiles, &readFastqsQueue, &readStreamingFinished]() { readFastqs(files, readFastqsQueue, readStreamingFinished); } };
-	std::thread GAMwriterThread { [file=params.outputGAMFile, &outputGAM, &deallocAlns, &allThreadsDone, &GAMWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputGAM, deallocAlns, allThreadsDone, GAMWriteDone, verboseMode, false); else GAMWriteDone = true; } };
-	std::thread GAFwriterThread { [file=params.outputGAFFile, &outputGAF, &deallocAlns, &allThreadsDone, &GAFWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputGAF, deallocAlns, allThreadsDone, GAFWriteDone, verboseMode, true); else GAFWriteDone = true; } };
-	std::thread JSONwriterThread { [file=params.outputJSONFile, &outputJSON, &deallocAlns, &allThreadsDone, &JSONWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputJSON, deallocAlns, allThreadsDone, JSONWriteDone, verboseMode, true); else JSONWriteDone = true; } };
-	std::thread correctedWriterThread { [file=params.outputCorrectedFile, &outputCorrected, &deallocAlns, &allThreadsDone, &correctedWriteDone, verboseMode=params.verboseMode, uncompressed=!params.compressCorrected]() { if (file != "") consumeBytesAndWrite(file, outputCorrected, deallocAlns, allThreadsDone, correctedWriteDone, verboseMode, uncompressed); else correctedWriteDone = true; } };
-	std::thread correctedClippedWriterThread { [file=params.outputCorrectedClippedFile, &outputCorrectedClipped, &deallocAlns, &allThreadsDone, &correctedClippedWriteDone, verboseMode=params.verboseMode, uncompressed=!params.compressClipped]() { if (file != "") consumeBytesAndWrite(file, outputCorrectedClipped, deallocAlns, allThreadsDone, correctedClippedWriteDone, verboseMode, uncompressed); else correctedClippedWriteDone = true; } };
+	std::thread GAMwriterThread { [file=params.outputGAMFile, &outputGAM, &deallocAlns, &allThreadsDone, &GAMWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputGAM, deallocAlns, allThreadsDone, GAMWriteDone, verboseMode, false, false); else GAMWriteDone = true; } };
+	std::thread GAFwriterThread { [file=params.outputGAFFile, &outputGAF, &deallocAlns, &allThreadsDone, &GAFWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputGAF, deallocAlns, allThreadsDone, GAFWriteDone, verboseMode, true, file.size() >= 3 && file.substr(file.size()-3) == ".gz"); else GAFWriteDone = true; } };
+	std::thread JSONwriterThread { [file=params.outputJSONFile, &outputJSON, &deallocAlns, &allThreadsDone, &JSONWriteDone, verboseMode=params.verboseMode]() { if (file != "") consumeBytesAndWrite(file, outputJSON, deallocAlns, allThreadsDone, JSONWriteDone, verboseMode, true, file.size() >= 3 && file.substr(file.size()-3) == ".gz"); else JSONWriteDone = true; } };
+	std::thread correctedWriterThread { [file=params.outputCorrectedFile, &outputCorrected, &deallocAlns, &allThreadsDone, &correctedWriteDone, verboseMode=params.verboseMode, uncompressed=!params.compressCorrected]() { if (file != "") consumeBytesAndWrite(file, outputCorrected, deallocAlns, allThreadsDone, correctedWriteDone, verboseMode, uncompressed, false); else correctedWriteDone = true; } };
+	std::thread correctedClippedWriterThread { [file=params.outputCorrectedClippedFile, &outputCorrectedClipped, &deallocAlns, &allThreadsDone, &correctedClippedWriteDone, verboseMode=params.verboseMode, uncompressed=!params.compressClipped]() { if (file != "") consumeBytesAndWrite(file, outputCorrectedClipped, deallocAlns, allThreadsDone, correctedClippedWriteDone, verboseMode, uncompressed, false); else correctedClippedWriteDone = true; } };
 
 	for (size_t i = 0; i < params.numThreads; i++)
 	{
