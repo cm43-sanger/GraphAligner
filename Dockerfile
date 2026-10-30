@@ -18,7 +18,7 @@ WORKDIR /src
 COPY . .
 RUN make bin/GraphAligner
 
-FROM ubuntu:26.04 AS runtime
+FROM ubuntu:26.04 AS minimal
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     libjemalloc2 \
@@ -28,3 +28,9 @@ COPY --from=build /src/bin/GraphAligner /usr/local/bin/GraphAligner
 
 RUN command -v GraphAligner \
     && GraphAligner --help > /dev/null
+
+FROM minimal AS nextflow
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3 \
+    && rm -rf /var/lib/apt/lists/*
