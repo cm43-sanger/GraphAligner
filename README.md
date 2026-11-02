@@ -6,11 +6,14 @@ Seed-and-extend program for aligning long error-prone reads to genome graphs. To
 
 ### Installation
 
-The phylograph fork of GraphAligner is distributed and used as a Docker image:
+The phylograph fork of GraphAligner is distributed and used as a Docker image. Point Buildx at the desired repository branch:
 
-- `git submodule update --init --recursive`
-- `docker build --platform linux/amd64 -t graphaligner .`
-- `docker run --rm graphaligner GraphAligner --help`
+```sh
+docker buildx build \
+  --platform linux/amd64 \
+  --load -t graphaligner \
+  'https://github.com/cm43-sanger/GraphAligner.git?branch=master'
+```
 
 ### Running
 
