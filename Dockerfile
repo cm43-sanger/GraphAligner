@@ -16,6 +16,7 @@ RUN apt-get update \
 
 COPY . /src
 WORKDIR /src
+
 RUN make bin/GraphAligner
 
 FROM ubuntu:26.04 AS minimal
