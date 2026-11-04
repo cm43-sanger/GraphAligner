@@ -11,7 +11,8 @@ The phylograph fork of GraphAligner is distributed and used as a Docker image. P
 ```sh
 docker buildx build \
   --platform linux/amd64 \
-  --load -t graphaligner \
+  --tag pg-graphaligner:latest \
+  --load \
   'https://github.com/cm43-sanger/GraphAligner.git?branch=master'
 ```
 
